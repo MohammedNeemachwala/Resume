@@ -1087,38 +1087,46 @@ const skillsSec=document.getElementById('skills');
 if(skillsSec)barObs.observe(skillsSec);
 
 /* ── CONTACT FORM ── */
-function sendForm(){
+async function sendForm(){
+  const n=document.getElementById('fn').value.trim();
+  const e=document.getElementById('fe').value.trim();
+  const p=document.getElementById('fp').value.trim();
+  const m=document.getElementById('fm').value.trim();
 
-  async function sendForm(){
-    const n = document.getElementById('fn').value.trim();
-    const e = document.getElementById('fe').value.trim();
-    const p = document.getElementById('fp').value.trim();
-    const m = document.getElementById('fm').value.trim();
+  if(!n||!e||!m){
+    alert('Please fill in your name, email, and message.');
+    return;
+  }
 
-    if(!n || !e || !m){
-        alert('Please fill in your name, email, and message.');
-        return;
-    }
+  const btn=document.querySelector('.form-btn');
+  btn.textContent='Sending…';
+  btn.disabled=true;
 
-    const formData = {
-        name: n,
-        email: e,
-        phone: p,
-        message: m
-    };
-
-    const res = await fetch('https://formspree.io/f/mrerbebl', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+  try{
+    const res=await fetch('https://formspree.io/f/YOUR_FORM_ID',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        name:n,
+        email:e,
+        phone:p,
+        message:m
+      })
     });
 
     if(res.ok){
-        document.getElementById('cfWrap').style.display='none';
-        document.getElementById('fsOk').style.display='block';
+      document.getElementById('cfWrap').style.display='none';
+      document.getElementById('fsOk').style.display='block';
     } else {
-        alert('Something went wrong. Please try again.');
+      alert('Something went wrong. Please try again or email directly.');
+      btn.textContent='Send Message →';
+      btn.disabled=false;
     }
+  } catch(err){
+    alert('Network error. Please check your connection and try again.');
+    btn.textContent='Send Message →';
+    btn.disabled=false;
+  }
 }
 
 /* ── ACTIVE NAV HIGHLIGHT ── */
